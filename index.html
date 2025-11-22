@@ -1,0 +1,586 @@
+# Скопируй и вставь это в PowerShell:
+
+$html = @"
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>warykid - Bio Card</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: 
+                linear-gradient(135deg, rgba(40, 40, 40, 0.85) 0%, rgba(60, 60, 60, 0.85) 50%, rgba(40, 40, 40, 0.85) 100%),
+                url('https://files.catbox.moe/h5smrc.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://files.catbox.moe/h5smrc.jpg');
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px);
+            z-index: -2;
+        }
+
+        .card {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px 35px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            border: 2px solid rgba(100, 100, 100, 0.6);
+            z-index: 1;
+        }
+
+        .profile-section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 3px solid rgba(120, 120, 120, 0.8);
+            box-shadow: 0 0 30px rgba(100, 100, 100, 0.5);
+            object-fit: cover;
+            display: block;
+        }
+
+        .username {
+            font-size: 28px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .frog-emoji {
+            font-size: 24px;
+            filter: drop-shadow(0 0 5px rgba(76, 175, 80, 0.6));
+        }
+
+        .info-section {
+            margin-bottom: 25px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #b8b8b8;
+            font-size: 16px;
+            margin-bottom: 12px;
+            padding: 8px 0;
+        }
+
+        .info-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            background: rgba(80, 80, 80, 0.3);
+            border: 2px solid rgba(100, 100, 100, 0.5);
+            border-radius: 15px;
+            padding: 18px 15px;
+            color: #ffffff;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn:hover {
+            background: rgba(100, 100, 100, 0.5);
+            border-color: rgba(120, 120, 120, 0.8);
+            box-shadow: 0 0 25px rgba(100, 100, 100, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .btn-icon {
+            font-size: 24px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #8a8a8a;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        .footer a {
+            color: #a0a0a0;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #c0c0c0;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(128, 128, 128, 0.4);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* ATOMIC HEART MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9998;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .atomic-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 700px;
+            z-index: 9999;
+            animation: glitchOpen 0.8s ease;
+        }
+
+        .atomic-modal.active {
+            display: block;
+        }
+
+        @keyframes glitchOpen {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+                filter: blur(10px);
+            }
+            10% {
+                transform: translate(-48%, -52%) scale(0.85);
+                filter: hue-rotate(90deg);
+            }
+            20% {
+                transform: translate(-52%, -48%) scale(0.9);
+            }
+            30% {
+                transform: translate(-50%, -50%) scale(0.95);
+                filter: hue-rotate(-90deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.02);
+            }
+            70% {
+                transform: translate(-51%, -49%) scale(1);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+                filter: blur(0);
+            }
+        }
+
+        .crt-screen {
+            background: linear-gradient(
+                to bottom,
+                #1a1a1a 0%,
+                #2a2a2a 50%,
+                #1a1a1a 100%
+            );
+            border: 15px solid #3a3a3a;
+            border-radius: 5px;
+            box-shadow: 
+                0 0 100px rgba(0, 0, 0, 0.9),
+                inset 0 0 50px rgba(0, 0, 0, 0.8),
+                0 0 0 3px #4a4a4a,
+                0 0 0 6px #2a2a2a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Пыль и грязь */
+        .crt-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(139, 69, 19, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 69, 19, 0.08) 0%, transparent 50%),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(100, 100, 100, 0.03) 3px,
+                    rgba(100, 100, 100, 0.03) 4px
+                );
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        /* CRT эффект сканлайнов */
+        .crt-screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 2;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
+        }
+
+        .screen-content {
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .terminal-text {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            color: #b8e986;
+            text-shadow: 
+                0 0 5px #b8e986,
+                0 0 10px #b8e986,
+                0 0 20px rgba(184, 233, 134, 0.5);
+            letter-spacing: 2px;
+            line-height: 1.6;
+            animation: textFlicker 3s infinite;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        @keyframes textFlicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.95; }
+            51% { opacity: 0.9; }
+            52% { opacity: 1; }
+            55% { opacity: 0.95; }
+            60% { opacity: 1; }
+        }
+
+        /* VHS помехи */
+        .vhs-noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAAUVBMVEUAAAABAQEAAAABAQEAAAABAQEBAQEAAAABAQEBAQEBAQEBAQEAAAABAQEBAQEAAAABAQEBAQEAAAABAQEBAQEBAQEAAAABAQEAAAABAQHudiAoAAAAGnRSTlMAAhXQyPf4D9gbEvYMwwfu582+tGnOppJiTWlGLzoAAACaSURBVHgBldJRDoAgDATRRelyVFTu/6+GhMTErU0/7E/TNKVAfwjBl8PgAWAGGKMCcCDGIMKnCyNlMJ1YHFWL0cVBC2CSEKK6rIvCqAhQ1dWmKKqCSURRVd9bBj8SkYrpKkiGJUEYtfTVkQQXmJdBfEfB1kQR5xvEe4qWIe47xHuGjiFcg3DNcGzY8m3asMX/mIhXdcV/dN2/AHZ2T6MAVMjNAAAAAElFTkSuQmCC');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 4;
+            animation: noise 0.2s infinite;
+        }
+
+        @keyframes noise {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -5%); }
+            20% { transform: translate(-10%, 5%); }
+            30% { transform: translate(5%, -10%); }
+            40% { transform: translate(-5%, 15%); }
+            50% { transform: translate(-10%, 5%); }
+            60% { transform: translate(15%, 0); }
+            70% { transform: translate(0, 10%); }
+            80% { transform: translate(-15%, 0); }
+            90% { transform: translate(10%, 5%); }
+        }
+
+        /* Глитч эффект */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: 'ПОТОМ НАПИШУ БИО, НАВЕРНОЕ.';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 2s infinite;
+            color: #ff00ff;
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 2s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(184, 233, 134, 0.2);
+            border: 2px solid #b8e986;
+            color: #b8e986;
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 24px;
+            line-height: 36px;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            background: rgba(184, 233, 134, 0.4);
+            box-shadow: 0 0 20px #b8e986;
+        }
+
+        /* Конденсат */
+        .condensation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 2%),
+                radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.04) 0%, transparent 3%),
+                radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.03) 0%, transparent 2%);
+            pointer-events: none;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="card">
+        <div class="profile-section">
+            <img src="https://files.catbox.moe/45mvcq.jpg" alt="Avatar" class="profile-image" crossorigin="anonymous">
+            <div class="username">
+                warykid
+                <span class="frog-emoji">🐸</span>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-item">
+                <span class="info-icon">📍</span>
+                <span>From: Russia</span>
+            </div>
+            <div class="info-item">
+                <span class="info-icon">💎</span>
+                <span>Python Developer</span>
+            </div>
+        </div>
+
+        <div class="buttons-grid">
+            <a href="https://t.me/dmtboyi" class="btn" target="_blank">
+                <span class="btn-icon">✈️</span>
+                <span>Telegram</span>
+            </a>
+            <a href="#" class="btn" id="bioBtn">
+                <span class="btn-icon">📝</span>
+                <span>Bio</span>
+            </a>
+            <a href="https://discord.com/users/vupim" class="btn" target="_blank">
+                <span class="btn-icon">💬</span>
+                <span>Discord</span>
+            </a>
+            <a href="https://t.me/dmtboyi" class="btn" target="_blank">
+                <span class="btn-icon">💰</span>
+                <span>Donate</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            Created by <a href="https://t.me/dmtboyi" target="_blank">@dmtboyi</a>
+        </div>
+    </div>
+
+    <!-- ATOMIC HEART MODAL -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="atomic-modal" id="atomicModal">
+        <div class="crt-screen">
+            <div class="vhs-noise"></div>
+            <div class="condensation"></div>
+            <div class="close-btn" id="closeBtn">×</div>
+            <div class="screen-content">
+                <div class="terminal-text glitch">
+                    ПОТОМ НАПИШУ БИО, НАВЕРНОЕ.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Частицы
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            particlesContainer.appendChild(particle);
+        }
+
+        // Модальное окно
+        const bioBtn = document.getElementById('bioBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const atomicModal = document.getElementById('atomicModal');
+        const closeBtn = document.getElementById('closeBtn');
+
+        bioBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            modalOverlay.classList.add('active');
+            atomicModal.classList.add('active');
+        });
+
+        closeBtn.addEventListener('click', function() {
+            modalOverlay.classList.remove('active');
+            atomicModal.classList.remove('active');
+        });
+
+        modalOverlay.addEventListener('click', function() {
+            modalOverlay.classList.remove('active');
+            atomicModal.classList.remove('active');
+        });
+    </script>
+</body>
+</html>
+"@
+
+$html | Out-File -FilePath "$env:USERPROFILE\Desktop\warykid-bio.html" -Encoding UTF8
+Start-Process "$env:USERPROFILE\Desktop\warykid-bio.html"
+Write-Host "✅ ОБНОВЛЕНО!" -ForegroundColor Green
+Write-Host "🎮 Добавлено:" -ForegroundColor Cyan
+Write-Host "   • Atomic Heart модальное окно" -ForegroundColor White
+Write-Host "   • Глитч-эффекты при открытии" -ForegroundColor White
+Write-Host "   • CRT/VHS помехи" -ForegroundColor White
+Write-Host "   • Советский терминал" -ForegroundColor White
+Write-Host "   • Пыль, грязь, конденсат" -ForegroundColor White
+Write-Host "   • Зелёный мерцающий текст" -ForegroundColor Green
+Write-Host "`n🚀 Открываю... Нажми на кнопку Bio!" -ForegroundColor Yellow
